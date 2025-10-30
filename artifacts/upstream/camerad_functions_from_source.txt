@@ -1,0 +1,70 @@
+CameraState      function     58 system/camerad/cameras/camera_qcom2.cc CameraState(SpectraMaster *master, const CameraConfig &config) : camera(master, config) {};
+OS04C10          function     34 system/camerad/sensors/os04c10.cc OS04C10::OS04C10() {
+OX03C10          function     26 system/camerad/sensors/ox03c10.cc OX03C10::OX03C10() {
+SpectraCamera    function    235 system/camerad/cameras/spectra.cc SpectraCamera::SpectraCamera(SpectraMaster *master, const CameraConfig &config)
+__anon93dc88860402 function    942 system/camerad/cameras/spectra.cc auto destroy_sync_obj = [](int cam_sync_fd, int32_t &sync_obj) {
+__anon93dc88860502 function    998 system/camerad/cameras/spectra.cc auto init_sensor_lambda = [this](SensorInfo *s) {
+__anon93dc88860602 function   1424 system/camerad/cameras/spectra.cc auto waitForSync = [&](uint32_t sync_obj, int timeout_ms, const char *sync_type) {
+__anon93dc88860702 function   1475 system/camerad/cameras/spectra.cc [](const auto &config) { return config.enabled; });
+add_patch        function    462 system/camerad/cameras/spectra.cc void add_patch(struct cam_packet *pkt, int32_t dst_hdl, uint32_t dst_offset, int32_t src_hdl, uint32_t src_offset) {
+alloc_buf        function    138 system/camerad/cameras/spectra.cc void *MemoryManager::alloc_buf(int size, uint32_t *handle) {
+alloc_w_mmu_hdl  function     91 system/camerad/cameras/spectra.cc void *alloc_w_mmu_hdl(int video0_fd, int len, uint32_t *handle, int align, int flags, int mmu_hdl, int mmu_hdl2) {
+calculate_exposure_value function     76 system/camerad/cameras/camera_common.cc float calculate_exposure_value(const CameraBuf *b, Rect ae_xywh, int x_skip, int y_skip) {
+camera_close     function   1261 system/camerad/cameras/spectra.cc void SpectraCamera::camera_close() {
+camera_map_bufs  function    958 system/camerad/cameras/spectra.cc void SpectraCamera::camera_map_bufs() {
+camera_open      function    277 system/camerad/cameras/spectra.cc void SpectraCamera::camera_open(VisionIpcServer *v, cl_device_id device_id, cl_context ctx) {
+camerad_thread   function    257 system/camerad/cameras/camera_qcom2.cc void camerad_thread() {
+clearAndRequeue  function   1404 system/camerad/cameras/spectra.cc void SpectraCamera::clearAndRequeue(uint64_t from_request_id) {
+clear_req_queue  function    249 system/camerad/cameras/spectra.cc int SpectraCamera::clear_req_queue() {
+configCSIPHY     function   1188 system/camerad/cameras/spectra.cc void SpectraCamera::configCSIPHY() {
+configICP        function   1121 system/camerad/cameras/spectra.cc void SpectraCamera::configICP() {
+configISP        function   1033 system/camerad/cameras/spectra.cc void SpectraCamera::configISP() {
+config_bps       function    472 system/camerad/cameras/spectra.cc void SpectraCamera::config_bps(int idx, int request_id) {
+config_ife       function    702 system/camerad/cameras/spectra.cc void SpectraCamera::config_ife(int idx, int request_id, bool init) {
+destroySyncObjectAt function    941 system/camerad/cameras/spectra.cc void SpectraCamera::destroySyncObjectAt(int index) {
+device_acquire   function     65 system/camerad/cameras/spectra.cc std::optional<int32_t> device_acquire(int fd, int32_t session_handle, void *data, uint32_t num_resources) {
+device_config    function     76 system/camerad/cameras/spectra.cc int device_config(int fd, int32_t session_handle, int32_t dev_handle, uint64_t packet_handle) {
+device_control   function     85 system/camerad/cameras/spectra.cc int device_control(int fd, int op_code, int session_handle, int dev_handle) {
+do_cam_control   function     26 system/camerad/cameras/spectra.cc int do_cam_control(int fd, int op_code, void *handle, int size) {
+do_sync_control  function     45 system/camerad/cameras/spectra.cc int do_sync_control(int fd, uint32_t id, void *handle, uint32_t size) {
+enqueue_frame    function    900 system/camerad/cameras/spectra.cc void SpectraCamera::enqueue_frame(uint64_t request_id) {
+free             function    154 system/camerad/cameras/spectra.cc void MemoryManager::free(void *ptr) {
+getExposureRegisters function    109 system/camerad/sensors/ox03c10.cc std::vector<i2c_random_wr_payload> OX03C10::getExposureRegisters(int exposure_time, int new_exp_g, bool dc_gain_enabled) const {
+getExposureRegisters function    121 system/camerad/sensors/os04c10.cc std::vector<i2c_random_wr_payload> OS04C10::getExposureRegisters(int exposure_time, int new_exp_g, bool dc_gain_enabled) const {
+getExposureScore function    133 system/camerad/sensors/ox03c10.cc float OX03C10::getExposureScore(float desired_ev, int exp_t, int exp_g_idx, float exp_gain, int gain_idx) const {
+getExposureScore function    137 system/camerad/sensors/os04c10.cc float OS04C10::getExposureScore(float desired_ev, int exp_t, int exp_g_idx, float exp_gain, int gain_idx) const {
+getSlaveAddress  function    128 system/camerad/sensors/ox03c10.cc int OX03C10::getSlaveAddress(int port) const {
+getSlaveAddress  function    132 system/camerad/sensors/os04c10.cc int OS04C10::getSlaveAddress(int port) const {
+get_gain_factor  function     66 system/camerad/cameras/camera_qcom2.cc float get_gain_factor() const {
+get_raw_frame_image function     65 system/camerad/cameras/camera_common.cc kj::Array<uint8_t> get_raw_frame_image(const CameraBuf *b) {
+handle_camera_event function   1327 system/camerad/cameras/spectra.cc bool SpectraCamera::handle_camera_event(const cam_req_mgr_message *event_data) {
+ife_downscale_configure function     23 system/camerad/sensors/os04c10.cc void OS04C10::ife_downscale_configure() {
+init             function     10 system/camerad/cameras/camera_common.cc void CameraBuf::init(cl_device_id device_id, cl_context context, SpectraCamera *cam, VisionIpcServer * v, int frame_cnt, VisionStreamType type) {
+init             function     71 system/camerad/cameras/camera_qcom2.cc void CameraState::init(VisionIpcServer *v, cl_device_id device_id, cl_context ctx) {
+init             function    178 system/camerad/cameras/spectra.cc void SpectraMaster::init() {
+linkDevices      function   1228 system/camerad/cameras/spectra.cc void SpectraCamera::linkDevices() {
+main             function      8 system/camerad/main.cc int main(int argc, char *argv[]) {
+openSensor       function    991 system/camerad/cameras/spectra.cc bool SpectraCamera::openSensor() {
+open_v4l_by_name_and_index function    103 system/camerad/cameras/camera_common.cc int open_v4l_by_name_and_index(const char name[], int index, int flags) {
+power_set_wait   function    128 system/camerad/cameras/spectra.cc static cam_cmd_power *power_set_wait(cam_cmd_power *power, int16_t delay_ms) {
+processFrame     function   1447 system/camerad/cameras/spectra.cc bool SpectraCamera::processFrame(int buf_idx, uint64_t request_id, uint64_t frame_id_raw, uint64_t timestamp) {
+release          function    120 system/camerad/cameras/spectra.cc void release(int video0_fd, uint32_t handle) {
+sendFrameToVipc  function     45 system/camerad/cameras/camera_common.cc void CameraBuf::sendFrameToVipc() {
+sendState        function    224 system/camerad/cameras/camera_qcom2.cc void CameraState::sendState() {
+sensors_i2c      function    337 system/camerad/cameras/spectra.cc void SpectraCamera::sensors_i2c(const struct i2c_random_wr_payload* dat, int len, int op_code, bool data_word) {
+sensors_init     function    367 system/camerad/cameras/spectra.cc int SpectraCamera::sensors_init() {
+sensors_poke     function    319 system/camerad/cameras/spectra.cc void SpectraCamera::sensors_poke(int request_id) {
+sensors_start    function    313 system/camerad/cameras/spectra.cc void SpectraCamera::sensors_start() {
+set_camera_exposure function    126 system/camerad/cameras/camera_qcom2.cc void CameraState::set_camera_exposure(float grey_frac) {
+set_exposure_rect function     88 system/camerad/cameras/camera_qcom2.cc void CameraState::set_exposure_rect() {
+syncFirstFrame   function   1467 system/camerad/cameras/spectra.cc bool SpectraCamera::syncFirstFrame(int camera_id, uint64_t request_id, uint64_t raw_id, uint64_t timestamp) {
+update_exposure_score function    117 system/camerad/cameras/camera_qcom2.cc void CameraState::update_exposure_score(float desired_ev, int exp_t, int exp_g_idx, float exp_gain) {
+validateEvent    function   1374 system/camerad/cameras/spectra.cc bool SpectraCamera::validateEvent(uint64_t request_id, uint64_t frame_id_raw) {
+waitForFrameReady function   1415 system/camerad/cameras/spectra.cc bool SpectraCamera::waitForFrameReady(uint64_t request_id) {
+write_cont       function     17 system/camerad/cameras/cdm.cc int write_cont(uint8_t *dst, uint32_t reg, const std::vector<uint32_t> &vals) {
+write_dmi        function      4 system/camerad/cameras/cdm.cc int write_dmi(uint8_t *dst, uint64_t *addr, uint32_t length, uint32_t dmi_addr, uint8_t sel) {
+write_random     function     34 system/camerad/cameras/cdm.cc int write_random(uint8_t *dst, const std::vector<uint32_t> &vals) {
+~CameraBuf       function     37 system/camerad/cameras/camera_common.cc CameraBuf::~CameraBuf() {
+~CameraState     function     86 system/camerad/cameras/camera_qcom2.cc CameraState::~CameraState() {}
+~MemoryManager   function    158 system/camerad/cameras/spectra.cc MemoryManager::~MemoryManager() {
+~SpectraCamera   function    243 system/camerad/cameras/spectra.cc SpectraCamera::~SpectraCamera() {
