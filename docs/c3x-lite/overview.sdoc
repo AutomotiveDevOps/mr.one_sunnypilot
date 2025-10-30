@@ -1,0 +1,38 @@
+[DOCUMENT]
+TITLE: C3X-lite Fork Overview
+VERSION: 0.1
+STATUS: DRAFT
+
+[METADATA]
+NAME: GeneratedOn
+VALUE: 2025-10-30
+
+[METADATA]
+NAME: SourceRepository
+VALUE: mr.one_sunnypilot
+
+[SECTION]
+TITLE: Hardware Context
+
+[TEXT]
+Mr. One retails the C3X-lite hardware variant which removes the driver monitoring camera and ships as a road-facing dual camera device. Reference product details are published at https://oneclone.net/product/c3x-lite/.
+
+[SECTION]
+TITLE: Camera Pipeline Differences
+
+[TEXT]
+The upstream `sunnypilot` repository builds the camera daemons from source (`system/camerad/SConscript`, `cameras/camera_common.cc`, `sensors/os04c10.cc`, etc.). The `mr.one_sunnypilot` fork instead deletes these sources and distributes a prebuilt binary at `system/camerad/camerad`, together with only the corresponding public headers. The removed `os04c10.cc` implementation is the driver-facing OX04-based sensor; its absence confirms the fork no longer compiles driver camera support and depends on the road-facing optical stack only.
+
+[SECTION]
+TITLE: Driver Monitoring Behaviour
+
+[TEXT]
+Runtime process registration (`system/manager/process_config.py`) still lists the driver monitoring daemons, but without the driver camera sensor implementation the published `driverCameraState` stream must be synthesized by the custom `camerad` binary. This arrangement allows the C3X-lite to boot existing sunnypilot processes while effectively bypassing real driver monitoring input.
+
+[SECTION]
+TITLE: Release Engineering Variance
+
+[TEXT]
+`system/version.py` was simplified to drop the sunnypilot-specific release channel sets (`release-tizi`, `release-tici`, `release-tizi-staging`, etc.) and to read version data from `common/version.h`. This reflects the fork’s focus on the Mr. One distribution rather than upstream release matrix management. The fork also omits upstream CI and build scripts in `.github/`, relying on prebuilt artifacts checked into the tree (`common/params_pyx.so`, `common/transformations/transformations.so`, `system/camerad/camerad`).
+
+

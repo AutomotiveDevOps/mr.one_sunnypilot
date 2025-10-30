@@ -1,5 +1,8 @@
 ![](https://user-images.githubusercontent.com/47793918/233812617-beab2e71-57b9-479e-8bff-c3931347ca40.png)
 
+## Mr. One C3X-lite Fork
+This repository tracks the `dev` branch of [sunnypilot](https://github.com/sunnypilot/sunnypilot) while preserving the changes required to run on Mr. One’s [C3X-lite hardware](https://oneclone.net/product/c3x-lite/). The C3X-lite omits the driver monitoring camera found on the OEM comma 3X, so the `system/camerad/camerad` binary shipped here disables the driver-facing pipeline while keeping road camera capture intact. All other software features mirror upstream sunnypilot development to stay current with active driving improvements.
+
 ## 🌞 What is sunnypilot?
 [sunnypilot](https://github.com/sunnyhaibin/sunnypilot) is a fork of comma.ai's openpilot, an open source driver assistance system. sunnypilot offers the user a unique driving experience for over 300+ supported car makes and models with modified behaviors of driving assist engagements. sunnypilot complies with comma.ai's safety rules as accurately as possible.
 
@@ -14,7 +17,7 @@ https://docs.sunnypilot.ai/ is your one stop shop for everything from features t
 
 ## 🚘 Running on a dedicated device in a car
 * A supported device to run this software
-    * a [comma three](https://comma.ai/shop/products/three) or a [C3X](https://comma.ai/shop/comma-3x)
+    * a [comma three](https://comma.ai/shop/products/three), a [C3X](https://comma.ai/shop/comma-3x), or a [Mr. One C3X-lite](https://oneclone.net/product/c3x-lite/)
 * This software
 * One of [the 300+ supported cars](https://github.com/commaai/openpilot/blob/master/docs/CARS.md). We support Honda, Toyota, Hyundai, Nissan, Kia, Chrysler, Lexus, Acura, Audi, VW, Ford and more. If your car is not supported but has adaptive cruise control and lane-keeping assist, it's likely able to run sunnypilot.
 * A [car harness](https://comma.ai/shop/products/car-harness) to connect to your car
