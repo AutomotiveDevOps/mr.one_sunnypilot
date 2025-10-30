@@ -1,0 +1,716 @@
+[DOCUMENT]
+TITLE: Sunnypilot/Openpilot Operational Requirements
+VERSION: 0.1
+STATUS: DRAFT
+
+[METADATA]
+NAME: GeneratedOn
+VALUE: 2025-10-30
+
+[METADATA]
+NAME: SourceRepository
+VALUE: mr.one_sunnypilot
+
+[SECTION]
+TITLE: Taxonomy
+
+[TEXT]
+This document classifies each requirement with tags in the form domain.* to satisfy the requested taxa covering the operational subsystems of sunnypilot/openpilot. The domains used are:
+- domain.system
+- domain.power
+- domain.sensing
+- domain.localization
+- domain.planning
+- domain.controls
+- domain.vehicle
+- domain.safety
+- domain.driver
+- domain.ui
+- domain.data
+- domain.connectivity
+- domain.software
+- domain.sunnypilot
+
+[SECTION]
+TITLE: System Architecture
+
+[REQUIREMENT]
+UID: SYS-001
+TITLE: Managed Process Lifecycle
+STATUS: accepted
+STATEMENT: The platform shall start, monitor, and stop runtime services according to the conditional predicates defined in the managed process registry so that only hardware-appropriate daemons run for each vehicle state.
+RATIONALE: Implemented by the managed process table in system/manager/process_config.py which wires guard functions, Params, and CarParams into PythonProcess, NativeProcess, and DaemonProcess definitions.
+TAGS: [domain.system]
+
+[REQUIREMENT]
+UID: SYS-002
+TITLE: Persistent Parameter Store
+STATUS: accepted
+STATEMENT: The platform shall provide a persistent key-value store accessible across processes for configuration, toggles, and state exchange.
+RATIONALE: common/params.py defines the Params interface with shared memory and filesystem backends consumed throughout the codebase including controls and sunnylink utilities.
+TAGS: [domain.system]
+
+[REQUIREMENT]
+UID: SYS-003
+TITLE: Messaging Fabric
+STATUS: accepted
+STATEMENT: The system shall use a publish-subscribe messaging fabric to exchange cap'n proto structured messages between all runtime processes.
+RATIONALE: cereal/messaging and the generated service definitions underpin SubMaster and PubMaster usage across modules such as selfdrive/controls/controlsd.py and system/sensord/sensord.py.
+TAGS: [domain.system]
+
+[REQUIREMENT]
+UID: SYS-004
+TITLE: Real-Time Scheduling
+STATUS: accepted
+STATEMENT: The runtime shall configure thread affinity and priority for time-critical loops to meet deterministic timing guarantees.
+RATIONALE: common/realtime.py exposes config_realtime_process used by controlsd, locationd, dmonitoringd, and other services to request specific cores and priorities.
+TAGS: [domain.system]
+
+[REQUIREMENT]
+UID: SYS-005
+TITLE: Hardware Abstraction
+STATUS: accepted
+STATEMENT: The platform shall detect device type and expose hardware-specific paths and capabilities to dependent services.
+RATIONALE: system/hardware modules and hw.Paths provide environment detection leveraged in process_config, modeld initialization, and sunnylink utilities.
+TAGS: [domain.system]
+
+[REQUIREMENT]
+UID: SYS-006
+TITLE: Boot Orchestration
+STATUS: accepted
+STATEMENT: The launch sequence shall bootstrap platform-specific launchers and fall back to the generic entrypoint when specialized launchers are unavailable.
+RATIONALE: launch_openpilot.sh dispatches to device-specific launch_chffrplus.sh while ensuring a fallback path for non-C3 hardware.
+TAGS: [domain.system]
+
+[REQUIREMENT]
+UID: SYS-007
+TITLE: Lifecycle Parameter Clearance
+STATUS: accepted
+STATEMENT: Manager initialization shall clear parameter namespaces flagged for lifecycle transitions before any runtime services start to prevent stale state from affecting process predicates.
+RATIONALE: system/manager/manager.py clears ParamKeyFlag scoped keys for manager start, onroad, offroad, and ignition events prior to preloading managed processes.
+TAGS: [domain.system]
+
+[REQUIREMENT]
+UID: SYS-008
+TITLE: Device Registration and Logging Context
+STATUS: accepted
+STATEMENT: The runtime shall complete device registration and bind logging metadata including git identity, dongle id, and hardware serial before launching managed processes.
+RATIONALE: manager_init in system/manager/manager.py registers the device, sets environment variables, and configures sentry/cloudlog context ahead of process preparation.
+TAGS: [domain.system]
+
+[REQUIREMENT]
+UID: SYS-009
+TITLE: Process Health Broadcasting
+STATUS: accepted
+STATEMENT: The process manager shall continuously publish aggregated process state snapshots so downstream modules can react to missing or unhealthy daemons.
+RATIONALE: system/manager/manager.py composes managerState messages from managed_processes and publishes them over cereal messaging each loop iteration.
+TAGS: [domain.system]
+
+[SECTION]
+TITLE: Power and Thermal Management
+
+[REQUIREMENT]
+UID: PWR-001
+TITLE: Offroad Power Budget Enforcement
+STATUS: accepted
+STATEMENT: The device shall integrate offroad power usage and request shutdown when voltage, capacity, or offroad duration thresholds are exceeded to protect the vehicle battery.
+RATIONALE: system/hardware/power_monitoring.py computes battery capacity and triggers should_shutdown, which hardwared uses to set DoShutdown when thresholds are met.
+TAGS: [domain.power]
+
+[REQUIREMENT]
+UID: PWR-002
+TITLE: Thermal and Startup Gating
+STATUS: accepted
+STATEMENT: The hardware daemon shall only assert the started state when ignition, startup prerequisites, and thermal bands satisfy configured criteria, otherwise it keeps the device in power-save.
+RATIONALE: system/hardware/hardwared.py evaluates ignition, startup_conditions, and thermal_status before toggling HARDWARE.set_power_save and publishing deviceState.started.
+TAGS: [domain.power]
+
+[REQUIREMENT]
+UID: PWR-003
+TITLE: Active Cooling Control
+STATUS: accepted
+STATEMENT: The platform shall command cooling fans with platform-specific controllers based on filtered component temperatures.
+RATIONALE: hardware_thread in system/hardware/hardwared.py instantiates TiciFanController and calls update to compute fanSpeedPercentDesired from temperature bands.
+TAGS: [domain.power]
+
+[REQUIREMENT]
+UID: PWR-004
+TITLE: Device Telemetry Emission
+STATUS: accepted
+STATEMENT: The hardware daemon shall publish CPU, GPU, network, and fan telemetry along with statsd gauges for runtime diagnostics.
+RATIONALE: system/hardware/hardwared.py populates deviceState metrics and samples statlog gauges for CPU usage, temperatures, power draw, and network state each cycle.
+TAGS: [domain.power]
+
+[SECTION]
+TITLE: Sensing and Perception
+
+[REQUIREMENT]
+UID: SEN-001
+TITLE: Camera Frame Acquisition
+STATUS: accepted
+STATEMENT: The vision subsystem shall capture road-facing camera frames and publish them via shared memory for downstream neural inference.
+RATIONALE: selfdrive/modeld/modeld.py consumes VisionIpcClient streams produced by system/camerad to feed model runners.
+TAGS: [domain.sensing]
+
+[REQUIREMENT]
+UID: SEN-002
+TITLE: IMU and Sensor Collection
+STATUS: accepted
+STATEMENT: The system shall collect accelerometer, gyroscope, temperature, and magnetometer data using dedicated sensor drivers with interrupt and polling loops.
+RATIONALE: system/sensord/sensord.py manages LSM6DS3 and MMC5603 sensors, publishes via messaging, and enforces data validity checks.
+TAGS: [domain.sensing]
+
+[REQUIREMENT]
+UID: SEN-003
+TITLE: Radar Lead Processing
+STATUS: accepted
+STATEMENT: The perception stack shall process radar tracks into lead vehicle estimates for planning and driver assistance features.
+RATIONALE: selfdrive/controls/radard aggregates radarState data and the sunnypilot ControlsExt exposes leadOne and leadTwo fields through custom.CarControlSP messages.
+TAGS: [domain.sensing]
+
+[REQUIREMENT]
+UID: SEN-004
+TITLE: Model Input Preparation
+STATUS: accepted
+STATEMENT: The perception subsystem shall preprocess camera and contextual inputs into tensors compatible with the active driving model architecture.
+RATIONALE: selfdrive/modeld/modeld.py manages InputQueues, OpenCL transformations, and numpy buffers that align with metadata-defined input shapes.
+TAGS: [domain.sensing]
+
+[REQUIREMENT]
+UID: SEN-005
+TITLE: Calibration Data Ingestion
+STATUS: accepted
+STATEMENT: The system shall ingest live calibration measurements and feed them to components needing device pose alignment.
+RATIONALE: selfdrive/locationd/locationd.py handles liveCalibration updates and controlsd reads pose via PoseCalibrator for curvature estimation.
+TAGS: [domain.sensing]
+
+[REQUIREMENT]
+UID: SEN-006
+TITLE: Sensor Health Monitoring
+STATUS: accepted
+STATEMENT: The sensing pipeline shall reject non-finite, time-skewed, or out-of-range sensor readings to maintain estimator stability.
+RATIONALE: LocationEstimator in selfdrive/locationd/locationd.py applies sanity thresholds, timestamp validation, and resets for invalid accelerometer, gyro, and camera odometry data.
+TAGS: [domain.sensing]
+
+[SECTION]
+TITLE: Localization and Mapping
+
+[REQUIREMENT]
+UID: LOC-001
+TITLE: Pose Estimation Filter
+STATUS: accepted
+STATEMENT: The system shall maintain a fused vehicle pose estimate using a Kalman filter across IMU, camera odometry, and calibration sources.
+RATIONALE: PoseKalman integration within locationd aggregates ObservationKind inputs to track position, orientation, and velocity with error checking.
+TAGS: [domain.localization]
+
+[REQUIREMENT]
+UID: LOC-002
+TITLE: Calibration Maintenance
+STATUS: accepted
+STATEMENT: The localization stack shall continuously update device-to-vehicle calibration and expose it to downstream consumers.
+RATIONALE: locationd updates device_from_calib matrices and publishes pose and calibration outputs consumed by controlsd and selfdrived.
+TAGS: [domain.localization]
+
+[REQUIREMENT]
+UID: LOC-003
+TITLE: Latency Compensation Parameters
+STATUS: accepted
+STATEMENT: The localization services shall publish latency estimates used to compensate control loops for actuation lag.
+RATIONALE: sunnypilot.sunnypilot.livedelay.helpers provides lateral delay parameters retrieved by controlsd and applied to torque controllers.
+TAGS: [domain.localization]
+
+[REQUIREMENT]
+UID: LOC-004
+TITLE: Map Data Lifecycle
+STATUS: accepted
+STATEMENT: The system shall manage OpenStreetMap extracts by installing updates, cleaning stale data, and scheduling refresh operations.
+RATIONALE: sunnypilot/mapd/mapd_manager.py orchestrates versioned downloads, cleanup, and Ratekeeper-driven refresh loops writing Params alerts.
+TAGS: [domain.localization]
+
+[REQUIREMENT]
+UID: LOC-005
+TITLE: GPS Backend Selection
+STATUS: accepted
+STATEMENT: The platform shall switch between ublox and Qualcomm GPS backends based on hardware availability while reflecting status in Params.
+RATIONALE: process_config predicates ublox, qcomgps, and UbloxAvailable flags ensuring the correct GPS daemon is launched per detected hardware.
+TAGS: [domain.localization]
+
+[SECTION]
+TITLE: Planning and Prediction
+
+[REQUIREMENT]
+UID: PLA-001
+TITLE: Model-Based Trajectory Planning
+STATUS: accepted
+STATEMENT: The planning subsystem shall consume neural network predictions to generate desired curvature and acceleration trajectories for the vehicle.
+RATIONALE: selfdrive/modeld/modeld.py parses model outputs into ModelDataV2.Action which plannerd and controlsd use for actuation.
+TAGS: [domain.planning]
+
+[REQUIREMENT]
+UID: PLA-002
+TITLE: Longitudinal Plan Synthesis
+STATUS: accepted
+STATEMENT: The planner shall synthesize longitudinal targets considering model outputs, lead vehicles, and stopping conditions.
+RATIONALE: selfdrive/controls/plannerd integrates lead data from radard and modeld actions to publish longitudinalPlan messages consumed by controlsd.
+TAGS: [domain.planning]
+
+[REQUIREMENT]
+UID: PLA-003
+TITLE: Onroad Event Integration
+STATUS: accepted
+STATEMENT: The planner shall incorporate onroad events to adjust or inhibit control actions when safety overrides are active.
+RATIONALE: controlsd evaluates onroadEvents override flags before enabling longitudinal control, demonstrating event-aware planning integration.
+TAGS: [domain.planning]
+
+[REQUIREMENT]
+UID: PLA-004
+TITLE: Personality and HUD Feedback
+STATUS: accepted
+STATEMENT: The planning outputs shall include driver personality and lead visibility hints for display on the HUD.
+RATIONALE: controlsd.publish populates hudControl fields such as leadDistanceBars and leadVisible derived from selfdriveState and longitudinalPlan.
+TAGS: [domain.planning]
+
+[REQUIREMENT]
+UID: PLA-005
+TITLE: Lane Change Meta Handling
+STATUS: accepted
+STATEMENT: The planning stack shall interpret model-provided lane change metadata to control blinkers and lateral behavior.
+RATIONALE: controlsd.state_control sets blinker commands when modelV2.meta.laneChangeState indicates a lane change in progress.
+TAGS: [domain.planning]
+
+[SECTION]
+TITLE: Controls and Actuation
+
+[REQUIREMENT]
+UID: CTRL-001
+TITLE: Longitudinal Control Loop
+STATUS: accepted
+STATEMENT: The control subsystem shall compute throttle and brake actuator commands using PID control bounded by vehicle-specific limits.
+RATIONALE: controlsd invokes LongControl.update with PID accel limits from the car interface to fill CarControl.actuators.accel.
+TAGS: [domain.controls]
+
+[REQUIREMENT]
+UID: CTRL-002
+TITLE: Lateral Control Selection
+STATUS: accepted
+STATEMENT: The controller shall select the appropriate lateral controller implementation based on CarParams steer control type and tuning mode.
+RATIONALE: controlsd constructor instantiates LatControlAngle, LatControlPID, or LatControlTorque according to steerControlType and lateralTuning.
+TAGS: [domain.controls]
+
+[REQUIREMENT]
+UID: CTRL-003
+TITLE: Safety-Limited Actuation
+STATUS: accepted
+STATEMENT: The control loop shall detect safety-limited steering output and adjust subsequent requests to respect actuator feedback.
+RATIONALE: controlsd.publish compares commanded torque or steering angle against carOutput to set steer_limited_by_safety flags.
+TAGS: [domain.controls]
+
+[REQUIREMENT]
+UID: CTRL-004
+TITLE: Finite Actuator Validation
+STATUS: accepted
+STATEMENT: The controller shall ensure actuator commands are finite numeric values before publishing to the vehicle bus.
+RATIONALE: controlsd iterates through ACTUATOR_FIELDS and resets non-finite values while logging errors to cloudlog.
+TAGS: [domain.controls]
+
+[REQUIREMENT]
+UID: CTRL-005
+TITLE: Latency Compensation
+STATUS: accepted
+STATEMENT: The control subsystem shall compensate for measured lateral delay when computing torque controller limits.
+RATIONALE: controlsd retrieves lateralDelay via get_lat_delay and updates LatControlTorque extension lag parameters accordingly.
+TAGS: [domain.controls]
+
+[REQUIREMENT]
+UID: CTRL-006
+TITLE: Pose-Aware Actuation
+STATUS: accepted
+STATEMENT: The controller shall incorporate calibrated orientation and angular velocity when available to improve downstream control consumers.
+RATIONALE: controlsd.publish populates CarControl orientationNED and angularVelocity fields when calibrated pose data exists.
+TAGS: [domain.controls]
+
+[REQUIREMENT]
+UID: CTRL-007
+TITLE: Online Vehicle Parameter Learning
+STATUS: accepted
+STATEMENT: The control stack shall maintain live estimates of steer ratio, stiffness, and angle offsets while bounding their validity for use in control loops.
+RATIONALE: selfdrive/locationd/paramsd.py runs VehicleParamsLearner to fuse livePose, carState, and calibration inputs, clipping outputs and publishing liveParameters with validity checks.
+TAGS: [domain.controls]
+
+[SECTION]
+TITLE: Vehicle Interface and Safety
+
+[REQUIREMENT]
+UID: VEH-001
+TITLE: Vehicle Fingerprint Selection
+STATUS: accepted
+STATEMENT: The system shall select vehicle-specific interfaces based on the detected car fingerprint.
+RATIONALE: controlsd instantiates the correct CarInterface via opendbc.car.car_helpers.interfaces keyed on CP.carFingerprint.
+TAGS: [domain.vehicle]
+
+[REQUIREMENT]
+UID: VEH-002
+TITLE: Safety Model Enforcement
+STATUS: accepted
+STATEMENT: The platform shall enforce panda safety model policies before actuating CAN messages.
+RATIONALE: panda firmware and python bindings in panda/ ensure safety model selection and message gating aligned with CarParams.SafetyModel.
+TAGS: [domain.vehicle]
+
+[REQUIREMENT]
+UID: VEH-003
+TITLE: Fault-Driven Control Disablement
+STATUS: accepted
+STATEMENT: The control subsystem shall disengage or inhibit actuation when vehicle-reported faults or overrides are active.
+RATIONALE: controlsd.state_control checks steerFault flags, standstill status, and overrideLongitudinal events before enabling latActive or longActive.
+TAGS: [domain.vehicle]
+
+[REQUIREMENT]
+UID: VEH-004
+TITLE: Cruise Control Mediation
+STATUS: accepted
+STATEMENT: The vehicle interface shall manage cruise control overrides, cancellations, and resumes based on planner state and vehicle feedback.
+RATIONALE: controlsd.publish sets cruiseControl override, cancel, and resume flags depending on openpilotLongitudinalControl, shouldStop, and carState.
+TAGS: [domain.vehicle]
+
+[REQUIREMENT]
+UID: VEH-005
+TITLE: Car Output Feedback Integration
+STATUS: accepted
+STATEMENT: The controller shall incorporate car controller actuator feedback to adjust engagement state.
+RATIONALE: CarOutput comparison in controlsd.publish determines steer safety limitation and informs future actuator saturation handling.
+TAGS: [domain.vehicle]
+
+[REQUIREMENT]
+UID: VEH-006
+TITLE: Unified Engagement Safeguards
+STATUS: accepted
+STATEMENT: The selfdrived layer shall clear or replace engagement events when vehicle conditions prohibit activation.
+RATIONALE: sunnypilot/mads/mads.py manipulates events such as wrongGear and pedalPressed to ensure safe engagement states for ModularAssistiveDrivingSystem.
+TAGS: [domain.vehicle]
+
+[REQUIREMENT]
+UID: VEH-007
+TITLE: Panda Firmware Stewardship
+STATUS: accepted
+STATEMENT: The platform shall verify and flash panda firmware, recover DFU devices, and reset internal pandas before starting CAN bridge execution.
+RATIONALE: selfdrive/pandad/pandad.py enumerates pandas, flashes mismatched firmware signatures, recovers DFU units, and restarts pandad with the discovered serial order.
+TAGS: [domain.vehicle]
+
+[REQUIREMENT]
+UID: VEH-008
+TITLE: Car Parameter Persistence and SecOC Provisioning
+STATUS: accepted
+STATEMENT: The car interface shall cache CarParams and CarParamsSP to persistent storage and provision SecOC keys prior to enabling actuator control.
+RATIONALE: selfdrive/car/card.py stores CarParams variants in Params, migrates SecOC keys, and sets safetyConfigs before signaling ControlsReady.
+TAGS: [domain.vehicle]
+
+[REQUIREMENT]
+UID: VEH-009
+TITLE: CAN Bridging and Cruise Mediation Loop
+STATUS: accepted
+STATEMENT: The car interface shall translate CAN traffic into carState, carOutput, and carParams messages while publishing actuator commands at the Ratekeeper-controlled 100Hz cycle.
+RATIONALE: selfdrive/car/card.py uses can_capnp_to_list to update CarInterface, publishes carState/carOutput, and sends actuator CAN via Ratekeeper alongside VCruiseHelper updates.
+TAGS: [domain.vehicle]
+
+[SECTION]
+TITLE: Operational Safety Governance
+
+[REQUIREMENT]
+UID: SAFE-001
+TITLE: Engagement Event Evaluation
+STATUS: accepted
+STATEMENT: The supervisory logic shall synthesize events from car state, planner, driver monitoring, and model metadata to determine engagement eligibility and surface onroad events.
+RATIONALE: selfdrive/selfdrived/selfdrived.py aggregates Events and EventsSP in update_events, combining onroadEvents, car-specific events, and planner metadata before updating the state machine.
+TAGS: [domain.safety]
+
+[REQUIREMENT]
+UID: SAFE-002
+TITLE: Device Health Alerting
+STATUS: accepted
+STATEMENT: The supervisory layer shall raise alerts for thermal, storage, memory, and fan malfunctions using telemetry from deviceState and peripheralState.
+RATIONALE: update_events in selfdrive/selfdrived/selfdrived.py adds overheat, outOfSpace, lowMemory, and fanMalfunction events when device metrics exceed thresholds.
+TAGS: [domain.safety]
+
+[REQUIREMENT]
+UID: SAFE-003
+TITLE: Process and Messaging Watchdog
+STATUS: accepted
+STATEMENT: The supervisory logic shall monitor managerState, socket liveness, and frequency metrics and emit processNotRunning or commIssue events when checks fail.
+RATIONALE: selfdrive/selfdrived/selfdrived.py inspects managerState process statuses and SubMaster health to log process_not_running and add commIssue or camera alerts.
+TAGS: [domain.safety]
+
+[REQUIREMENT]
+UID: SAFE-004
+TITLE: Safety Model Alignment
+STATUS: accepted
+STATEMENT: The supervisory layer shall compare panda safety models and controlsAllowed flags against CarParams expectations and trigger controlsMismatch on persistent mismatches.
+RATIONALE: selfdrive/selfdrived/selfdrived.py evaluates pandaStates against CP.safetyConfigs and increments mismatch counters to raise controlsMismatch or cruiseMismatch events.
+TAGS: [domain.safety]
+
+[SECTION]
+TITLE: Driver Interaction and Monitoring
+
+[REQUIREMENT]
+UID: DM-001
+TITLE: Driver Monitoring Loop
+STATUS: accepted
+STATEMENT: The system shall evaluate driver attention metrics and publish driverMonitoringState at 20Hz when the monitoring model provides updates.
+RATIONALE: selfdrive/monitoring/dmonitoringd.py runs DriverMonitoring.run_step when driverStateV2 updates and publishes the resulting state via messaging.
+TAGS: [domain.driver]
+
+[REQUIREMENT]
+UID: DM-002
+TITLE: Always-On Monitoring Toggle
+STATUS: accepted
+STATEMENT: Driver monitoring shall support runtime toggles for always-on behavior fetched from persistent parameters.
+RATIONALE: dmonitoringd reloads AlwaysOnDM from Params every 40 frames and updates the DriverMonitoring instance.
+TAGS: [domain.driver]
+
+[REQUIREMENT]
+UID: DM-003
+TITLE: RHD Detection Persistence
+STATUS: accepted
+STATEMENT: The monitoring subsystem shall persist detected right-hand-drive configuration when sufficient wheel position evidence accumulates.
+RATIONALE: dmonitoringd stores IsRhdDetected via params.put_bool_nonblocking when wheel positions exceed thresholds.
+TAGS: [domain.driver]
+
+[REQUIREMENT]
+UID: DM-004
+TITLE: Engagement Event Mediation
+STATUS: accepted
+STATEMENT: Driver assist extensions shall mediate engagement and disengagement events based on pedal usage, cruise availability, and manual inputs.
+RATIONALE: sunnypilot/mads/mads.py inspects button events, pedal presses, and cruise state to add or clear custom OnroadEventSP alerts.
+TAGS: [domain.driver]
+
+[REQUIREMENT]
+UID: DM-005
+TITLE: Silent Alert Management
+STATUS: accepted
+STATEMENT: The driver assistance logic shall downgrade certain alerts to silent variants when assistive steering remains available in paused modes.
+RATIONALE: MADS replace_event and transition_paused_state functions map core alerts to silentLkasDisable or silentSeatbeltNotLatched conditions.
+TAGS: [domain.driver]
+
+[SECTION]
+TITLE: User Interface and Alerts
+
+[REQUIREMENT]
+UID: UI-001
+TITLE: UI Process Availability
+STATUS: accepted
+STATEMENT: A dedicated UI process shall run continuously to render onroad and offroad displays with watchdog supervision.
+RATIONALE: process_config launches selfdrive/ui with watchdog_max_dt guards ensuring UI responsiveness on embedded hardware.
+TAGS: [domain.ui]
+
+[REQUIREMENT]
+UID: UI-002
+TITLE: Sound Alert Generation
+STATUS: accepted
+STATEMENT: The system shall generate auditory alerts based on onroad events and planner state transitions.
+RATIONALE: process_config schedules soundd which listens to events and plays audio feedback during control transitions.
+TAGS: [domain.ui]
+
+[REQUIREMENT]
+UID: UI-003
+TITLE: HUD Feedback Population
+STATUS: accepted
+STATEMENT: The controller shall populate HUD control fields with speed, lane, and lead information for visual display.
+RATIONALE: controlsd.publish fills hudControl setSpeed, lanesVisible, and lead indicators prior to messaging.
+TAGS: [domain.ui]
+
+[REQUIREMENT]
+UID: UI-004
+TITLE: Offroad Alerting
+STATUS: accepted
+STATEMENT: The system shall raise offroad alerts when maintenance actions, such as map downloads, are required.
+RATIONALE: sunnypilot/mapd/mapd_manager.set_offroad_alert posts Offroad_OSMUpdateRequired based on cleanup state and Params flags.
+TAGS: [domain.ui]
+
+[SECTION]
+TITLE: Data Logging and Diagnostics
+
+[REQUIREMENT]
+UID: DATA-001
+TITLE: Route Logging
+STATUS: accepted
+STATEMENT: The platform shall record onroad data segments for later analysis and replay.
+RATIONALE: process_config schedules loggerd and encoderd to capture logs whenever the vehicle is onroad.
+TAGS: [domain.data]
+
+[REQUIREMENT]
+UID: DATA-002
+TITLE: Telemetry Publishing
+STATUS: accepted
+STATEMENT: The system shall publish diagnostic messages for process health and system metrics.
+RATIONALE: system/logmessaged and system/statsd processes stream log messages and statistics as configured in process_config.
+TAGS: [domain.data]
+
+[REQUIREMENT]
+UID: DATA-003
+TITLE: Cloud Logging Upload
+STATUS: accepted
+STATEMENT: Recorded logs shall be uploaded when uploader prerequisites are satisfied and upload toggles permit it.
+RATIONALE: process_config includes uploader with uploader_ready predicate honoring OnroadUploads and NetworkMetered Params.
+TAGS: [domain.data]
+
+[REQUIREMENT]
+UID: DATA-004
+TITLE: Tombstone Crash Capture
+STATUS: accepted
+STATEMENT: The system shall capture crash tombstones on embedded hardware when supported.
+RATIONALE: process_config launches tombstoned on devices that are not PCs to capture native crash dumps.
+TAGS: [domain.data]
+
+[REQUIREMENT]
+UID: DATA-005
+TITLE: Offroad Backup Management
+STATUS: accepted
+STATEMENT: The system shall manage device backups during offroad periods when sunnylink connectivity is ready.
+RATIONALE: process_config adds sunnypilot.sunnylink.backups.manager guarded by sunnylink_ready_shim and only_offroad predicates.
+TAGS: [domain.data]
+
+[REQUIREMENT]
+UID: DATA-006
+TITLE: Status Packet Logging
+STATUS: accepted
+STATEMENT: The platform shall periodically log aggregated hardware status packets and persist the last offroad snapshot for diagnostics.
+RATIONALE: system/hardware/hardwared.py emits cloudlog STATUS_PACKET events every ten minutes and stores the last offroad packet in the LastOffroadStatusPacket param.
+TAGS: [domain.data]
+
+[SECTION]
+TITLE: Connectivity and Cloud Services
+
+[REQUIREMENT]
+UID: NET-001
+TITLE: Athena Connectivity Daemon
+STATUS: accepted
+STATEMENT: The platform shall run a persistent Athena daemon manager to maintain cloud connectivity and telemetry sessions.
+RATIONALE: system/athena/manage_athenad.py supervises the athenad process, binding device metadata and restarting on exit.
+TAGS: [domain.connectivity]
+
+[REQUIREMENT]
+UID: NET-002
+TITLE: Sunnylink Registration Management
+STATUS: accepted
+STATEMENT: The system shall manage sunnylink registration state and trigger registration flows when enabled but unregistered.
+RATIONALE: process_config launches sunnylink_registration_manager using sunnylink_need_register_shim defined in sunnypilot/sunnylink/utils.py.
+TAGS: [domain.connectivity]
+
+[REQUIREMENT]
+UID: NET-003
+TITLE: Sunnylink Uploader Eligibility
+STATUS: accepted
+STATEMENT: Cloud uploads via sunnylink shall respect network metering and registration status before starting transfers.
+RATIONALE: sunnypilot/sunnylink/utils.py exposes use_sunnylink_uploader which checks Params before uploader processes run.
+TAGS: [domain.connectivity]
+
+[REQUIREMENT]
+UID: NET-004
+TITLE: Remote API Token Handling
+STATUS: accepted
+STATEMENT: The platform shall support retrieval and storage of sunnylink API tokens for authenticated service access.
+RATIONALE: sunnypilot/sunnylink/utils.py implements get_api_token and parameter persistence using SunnylinkApi.
+TAGS: [domain.connectivity]
+
+[REQUIREMENT]
+UID: NET-005
+TITLE: WebRTC Teleoperation Bridge
+STATUS: accepted
+STATEMENT: The platform shall bridge configured messaging services, video, and audio over WebRTC sessions to support remote monitoring and teleoperation tooling.
+RATIONALE: system/webrtc/webrtcd.py orchestrates StreamSession objects that map cereal publishers/subscribers onto RTC data channels alongside LiveStream video and audio tracks.
+TAGS: [domain.connectivity]
+
+[SECTION]
+TITLE: Software Management and Tooling
+
+[REQUIREMENT]
+UID: SW-001
+TITLE: Model Bundle Management
+STATUS: accepted
+STATEMENT: The system shall download, verify, and activate driving model bundles based on user selection and availability.
+RATIONALE: sunnypilot/models/manager.py orchestrates ModelFetcher downloads, SHA verification, and active bundle persistence via Params.
+TAGS: [domain.software]
+
+[REQUIREMENT]
+UID: SW-002
+TITLE: Model Runner Selection
+STATUS: accepted
+STATEMENT: The runtime shall launch the appropriate model runner binary (stock, SNPE, or tinygrad) according to active runner choice.
+RATIONALE: process_config guards modeld, modeld_snpe, and modeld_tinygrad with get_active_model_runner predicates from sunnypilot.models.helpers.
+TAGS: [domain.software]
+
+[REQUIREMENT]
+UID: SW-003
+TITLE: Software Update Scheduling
+STATUS: accepted
+STATEMENT: The system shall defer updater execution to offroad periods on embedded hardware.
+RATIONALE: process_config schedules updated with only_offroad predicate and disabled on PC targets.
+TAGS: [domain.software]
+
+[REQUIREMENT]
+UID: SW-004
+TITLE: Developer Tooling Support
+STATUS: accepted
+STATEMENT: The platform shall offer optional tooling processes such as copyparty or github runner when corresponding binaries exist and toggles are enabled.
+RATIONALE: process_config conditionally appends copyparty-sfx and github_runner_start based on filesystem checks and Params flags.
+TAGS: [domain.software]
+
+[SECTION]
+TITLE: Sunnypilot Extensions
+
+[REQUIREMENT]
+UID: SP-001
+TITLE: Controls Extension Messaging
+STATUS: accepted
+STATEMENT: Sunnypilot shall extend control messaging with custom CarControlSP payloads carrying radar and MADS state.
+RATIONALE: sunnypilot/selfdrive/controls/controlsd_ext.py packages radarState leads and selfdriveStateSP fields into carControlSP messages.
+TAGS: [domain.sunnypilot]
+
+[REQUIREMENT]
+UID: SP-002
+TITLE: Blinker Pause Lateral Handling
+STATUS: accepted
+STATEMENT: Sunnypilot shall pause lateral control when blinker-based pause logic determines manual intervention is desired.
+RATIONALE: ControlsExt.get_lat_active consults BlinkerPauseLateral which reads Params to temporarily disable latActive.
+TAGS: [domain.sunnypilot]
+
+[REQUIREMENT]
+UID: SP-003
+TITLE: Modular Assistive Driving System State Machine
+STATUS: accepted
+STATEMENT: Sunnypilot shall manage a modular assistive driving state machine that interprets button events, pedals, and gear state to control engagement.
+RATIONALE: sunnypilot/mads/mads.py constructs StateMachine and processes button events to set custom events and silent modes.
+TAGS: [domain.sunnypilot]
+
+[REQUIREMENT]
+UID: SP-004
+TITLE: Sunnylink Backup Coordination
+STATUS: accepted
+STATEMENT: Sunnypilot shall coordinate backups over sunnylink when registration and connectivity requirements are satisfied.
+RATIONALE: sunnypilot.sunnylink.backups.manager is launched offroad with sunnylink_ready guards ensuring backups run only when authorized.
+TAGS: [domain.sunnypilot]
+
+[REQUIREMENT]
+UID: SP-005
+TITLE: Map Service Integration
+STATUS: accepted
+STATEMENT: Sunnypilot shall integrate mapd services for live map data management and alerting.
+RATIONALE: process_config adds mapd native process and mapd_manager python supervisor to maintain OSM data and Params alerts.
+TAGS: [domain.sunnypilot]
+
+[REQUIREMENT]
+UID: SP-006
+TITLE: Latency Cache Initialization
+STATUS: accepted
+STATEMENT: Sunnypilot shall initialize model state with cached lateral delay parameters to avoid cold-start lag spikes.
+RATIONALE: sunnypilot/modeld/modeld_base.py retrieves LagdValueCache from Params during ModelStateBase initialization.
+TAGS: [domain.sunnypilot]
+
+[REQUIREMENT]
+UID: SP-007
+TITLE: Intelligent Cruise Button Automation
+STATUS: accepted
+STATEMENT: Sunnypilot shall automate cruise control button presses to align the dashboard set speed with longitudinal plan targets when the controller is ready.
+RATIONALE: sunnypilot/selfdrive/car/intelligent_cruise_button_management/controller.py computes button states and selfdrive/selfdrived/selfdrived.py runs icbm.run each cycle before publishing the automation state in selfdriveStateSP.
+TAGS: [domain.sunnypilot]
+
+
