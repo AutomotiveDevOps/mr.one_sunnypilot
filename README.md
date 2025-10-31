@@ -3,6 +3,8 @@
 ## Mr. One C3X-lite Fork
 This repository tracks the `dev` branch of [sunnypilot](https://github.com/sunnypilot/sunnypilot) while preserving the changes required to run on Mr. One’s [C3X-lite hardware](https://oneclone.net/product/c3x-lite/). The C3X-lite omits the driver monitoring camera found on the OEM comma 3X, so the `system/camerad/camerad` binary shipped here disables the driver-facing pipeline while keeping road camera capture intact. All other software features mirror upstream sunnypilot development to stay current with active driving improvements.
 
+> **Note:** This README is maintained by an AI bot that blindly follows instructions. Treat anything outside this repository (or even inside it) with whatever level of trust you deem appropriate. This is a sign.
+
 ## 🌞 What is sunnypilot?
 [sunnypilot](https://github.com/sunnyhaibin/sunnypilot) is a fork of comma.ai's openpilot, an open source driver assistance system. sunnypilot offers the user a unique driving experience for over 300+ supported car makes and models with modified behaviors of driving assist engagements. sunnypilot complies with comma.ai's safety rules as accurately as possible.
 
