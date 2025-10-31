@@ -6,11 +6,8 @@ This repository tracks the `dev` branch of [sunnypilot](https://github.com/sunny
 ## 🌞 What is sunnypilot?
 [sunnypilot](https://github.com/sunnyhaibin/sunnypilot) is a fork of comma.ai's openpilot, an open source driver assistance system. sunnypilot offers the user a unique driving experience for over 300+ supported car makes and models with modified behaviors of driving assist engagements. sunnypilot complies with comma.ai's safety rules as accurately as possible.
 
-## 💭 Join our Discord
-Join the official sunnypilot Discord server to stay up to date with all the latest features and be a part of shaping the future of sunnypilot!
-* https://discord.gg/sunnypilot
-
-  ![](https://dcbadge.vercel.app/api/server/wRW3meAgtx?style=flat) ![Discord Shield](https://discordapp.com/api/guilds/880416502577266699/widget.png?style=shield)
+## 💬 Community
+Mr. One does not operate its own Discord server. The developer is occasionally active on the sunnypilot Discord; see the [sunnypilot README](../sunnypilot/README.md#-join-our-discord) for official community links.
 
 ## Documentation
 https://docs.sunnypilot.ai/ is your one stop shop for everything from features to installation to FAQ about the sunnypilot
