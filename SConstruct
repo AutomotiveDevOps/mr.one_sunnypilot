@@ -6,6 +6,12 @@ import platform
 import shutil
 import numpy as np
 
+from SCons.Script import COMMAND_LINE_TARGETS
+
+minimal_camerad_build = False
+if COMMAND_LINE_TARGETS:
+  minimal_camerad_build = all(t.startswith('system/camerad') for t in COMMAND_LINE_TARGETS)
+
 import SCons.Errors
 
 SCons.Warnings.warningAsException(True)
@@ -363,26 +369,40 @@ Export('messaging')
 
 
 # Build other submodules
-SConscript(['panda/SConscript'])
+if minimal_camerad_build:
+  print("Skipping panda build for camerad-only target")
+else:
+  SConscript(['panda/SConscript'])
 
-# Build rednose library
-SConscript(['rednose/SConscript'])
+# Build rednose library (optional for minimal builds)
+if minimal_camerad_build:
+  print("Skipping rednose build for camerad-only target")
+elif File('rednose/SConscript').exists():
+  SConscript(['rednose/SConscript'])
+else:
+  print("Warning: skipping rednose build (rednose/SConscript not found)")
 
 # Build system services
-SConscript([
-  'system/ubloxd/SConscript',
-  'system/loggerd/SConscript',
-])
+if minimal_camerad_build:
+  print("Skipping ubloxd/loggerd builds for camerad-only target")
+else:
+  SConscript([
+    'system/ubloxd/SConscript',
+    'system/loggerd/SConscript',
+  ])
 
 if arch == "larch64":
   SConscript(['system/camerad/SConscript'])
 
 # Build openpilot
-SConscript(['third_party/SConscript'])
+if minimal_camerad_build:
+  print("Skipping third_party/selfdrive/sunnypilot builds for camerad-only target")
+else:
+  SConscript(['third_party/SConscript'])
 
-SConscript(['selfdrive/SConscript'])
+  SConscript(['selfdrive/SConscript'])
 
-SConscript(['sunnypilot/SConscript'])
+  SConscript(['sunnypilot/SConscript'])
 
 if Dir('#tools/cabana/').exists() and GetOption('extras'):
   SConscript(['tools/replay/SConscript'])
