@@ -143,15 +143,24 @@ class CarHarness(EnumBase):
   ford_q3 = BaseCarHarness("Ford Q3 connector")
   ford_q4 = BaseCarHarness("Ford Q4 connector", parts=[Accessory.harness_box, Accessory.comma_power, Cable.long_obdc_cable, Cable.usbc_coupler])
   rivian = BaseCarHarness("Rivian A connector", parts=[Accessory.harness_box, Accessory.comma_power, Cable.long_obdc_cable, Cable.usbc_coupler])
-  tesla_a = BaseCarHarness("Tesla A connector", parts=[Accessory.harness_box, Cable.long_obdc_cable, Cable.usbc_coupler])
-  tesla_b = BaseCarHarness("Tesla B connector", parts=[Accessory.harness_box, Cable.long_obdc_cable, Cable.usbc_coupler])
+  tesla_a = BaseCarHarness("Tesla A connector", parts=[Accessory.harness_box, Accessory.comma_power, Cable.long_obdc_cable, Cable.usbc_coupler])
+  tesla_b = BaseCarHarness("Tesla B connector", parts=[Accessory.harness_box, Accessory.comma_power, Cable.long_obdc_cable, Cable.usbc_coupler])
   psa_a = BaseCarHarness("PSA A connector", parts=[Accessory.harness_box, Cable.long_obdc_cable, Cable.usbc_coupler])
+
+  # custom harness
+  honda_clarity = BaseCarHarness("Honda Nidec connector + Honda Clarity Proxy Board")
 
 
 class Device(EnumBase):
   threex = BasePart("comma 3X", parts=[Mount.mount, Cable.right_angle_obd_c_cable_1_5ft])
   # variant of comma 3X with angled mounts
   threex_angled_mount = BasePart("comma 3X", parts=[Mount.angled_mount_8_degrees, Cable.right_angle_obd_c_cable_1_5ft])
+  red_panda = BasePart("red panda")
+
+
+class Kit(EnumBase):
+  red_panda_kit = BasePart("CAN FD panda kit", parts=[Device.red_panda, Accessory.harness_box,
+                                                      Cable.usb_a_2_a_cable, Cable.usbc_otg_cable, Cable.obd_c_cable_1_5ft])
 
 
 class PartType(Enum):
@@ -159,6 +168,7 @@ class PartType(Enum):
   cable = Cable
   connector = CarHarness
   device = Device
+  kit = Kit
   mount = Mount
   tool = Tool
 
@@ -169,6 +179,7 @@ DEFAULT_CAR_PARTS: list[EnumBase] = [Device.threex]
 @dataclass
 class CarParts:
   parts: list[EnumBase] = field(default_factory=list)
+  custom_parts_url: str | None = None
 
   def __call__(self):
     return copy.deepcopy(self)
@@ -298,7 +309,10 @@ class CarDocs:
     # hardware column
     hardware_col = "None"
     if self.car_parts.parts:
-      buy_link = f'<a href="https://comma.ai/shop/comma-3x?harness={self.name}">Buy Here</a>'
+      if self.car_parts.custom_parts_url is not None:
+        buy_link = f'<a href="{self.car_parts.custom_parts_url}">Buy Here</a>'
+      else:
+        buy_link = f'<a href="https://comma.ai/shop/comma-3x?harness={self.name}">Buy Here</a>'
 
       tools_docs = [part for part in self.car_parts.all_parts() if isinstance(part, Tool)]
       parts_docs = [part for part in self.car_parts.all_parts() if not isinstance(part, Tool)]

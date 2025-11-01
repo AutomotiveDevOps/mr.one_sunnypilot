@@ -1,6 +1,6 @@
 #pragma once
 
-#include "opendbc/safety/declarations.h"
+#include "opendbc/safety/safety_declarations.h"
 
 // CAN msgs we care about
 #define MAZDA_LKAS          0x243U
@@ -34,6 +34,7 @@ static void mazda_rx_hook(const CANPacket_t *msg) {
     if (msg->addr == MAZDA_CRZ_CTRL) {
       bool cruise_engaged = msg->data[0] & 0x8U;
       pcm_cruise_check(cruise_engaged);
+      acc_main_on = GET_BIT(msg, 17U);
     }
 
     if (msg->addr == MAZDA_ENGINE_DATA) {
@@ -94,7 +95,7 @@ static safety_config mazda_init(uint16_t param) {
     {.msg = {{MAZDA_PEDALS,       0, 8, 50U, .ignore_checksum = true, .ignore_counter = true, .ignore_quality_flag = true}, { 0 }, { 0 }}},
   };
 
-  SAFETY_UNUSED(param);
+  UNUSED(param);
   return BUILD_SAFETY_CFG(mazda_rx_checks, MAZDA_TX_MSGS);
 }
 

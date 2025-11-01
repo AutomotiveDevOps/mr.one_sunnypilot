@@ -2,6 +2,9 @@
 from opendbc.car.structs import CarParams
 from opendbc.car.chrysler.values import CAR
 
+from opendbc.sunnypilot.car.fingerprints_ext import merge_fw_versions
+from opendbc.sunnypilot.car.chrysler.fingerprints_ext import FW_VERSIONS_EXT
+
 Ecu = CarParams.Ecu
 
 FW_VERSIONS = {
@@ -351,7 +354,6 @@ FW_VERSIONS = {
       b'68402707AB',
       b'68402708AB',
       b'68402714AB',
-      b'68402736AB',
       b'68402971AD',
       b'68454144AD',
       b'68454145AB',
@@ -380,7 +382,6 @@ FW_VERSIONS = {
       b'68417279AA',
       b'68417280AA',
       b'68417281AA',
-      b'68417283AA',
       b'68453431AA',
       b'68453433AA',
       b'68453435AA',
@@ -393,7 +394,6 @@ FW_VERSIONS = {
       b'05035674AB ',
       b'68412635AE ',
       b'68412635AG ',
-      b'68412635AH ',
       b'68412660AD ',
       b'68412660AF ',
       b'68422860AB',
@@ -407,7 +407,6 @@ FW_VERSIONS = {
     (Ecu.transmission, 0x7e1, None): [
       b'05035707AA',
       b'68419672AC',
-      b'68419675AC',
       b'68419678AB',
       b'68423905AB',
       b'68449258AC',
@@ -785,3 +784,5 @@ FW_VERSIONS = {
     ],
   },
 }
+
+FW_VERSIONS = merge_fw_versions(FW_VERSIONS, FW_VERSIONS_EXT)
