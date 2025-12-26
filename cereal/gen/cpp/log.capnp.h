@@ -1219,7 +1219,7 @@ struct ControlsState::LateralTorqueState {
   class Pipeline;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(e774a050cbf689a4, 5, 0)
+    CAPNP_DECLARE_STRUCT_HEADER(e774a050cbf689a4, 6, 0)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -2329,7 +2329,7 @@ struct DriverMonitoringState {
   class Pipeline;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(b83cda094a1da284, 6, 2)
+    CAPNP_DECLARE_STRUCT_HEADER(b83cda094a1da284, 7, 2)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -2860,8 +2860,8 @@ struct Event {
     TEMPERATURE_SENSOR,
     ACCELEROMETER,
     GYROSCOPE,
-    GYROSCOPE2,
-    ACCELEROMETER2,
+    GYROSCOPE2_D_E_P_R_E_C_A_T_E_D,
+    ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D,
     UI_DEBUG,
     SOUND_PRESSURE,
     NAV_MODEL_D_E_P_R_E_C_A_T_E_D,
@@ -2883,7 +2883,7 @@ struct Event {
     LIVESTREAM_ROAD_ENCODE_DATA,
     LIVESTREAM_WIDE_ROAD_ENCODE_DATA,
     LIVESTREAM_DRIVER_ENCODE_DATA,
-    TEMPERATURE_SENSOR2,
+    TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D,
     CUSTOM_RESERVED_RAW_DATA0,
     CUSTOM_RESERVED_RAW_DATA1,
     CUSTOM_RESERVED_RAW_DATA2,
@@ -8133,6 +8133,10 @@ public:
 
   inline float getDesiredLateralAccel() const;
 
+  inline float getDesiredLateralJerk() const;
+
+  inline  ::int32_t getVersion() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -8193,6 +8197,12 @@ public:
 
   inline float getDesiredLateralAccel();
   inline void setDesiredLateralAccel(float value);
+
+  inline float getDesiredLateralJerk();
+  inline void setDesiredLateralJerk(float value);
+
+  inline  ::int32_t getVersion();
+  inline void setVersion( ::int32_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -17464,7 +17474,7 @@ public:
   inline bool hasRawPredictions() const;
   inline  ::capnp::Data::Reader getRawPredictions() const;
 
-  inline float getPoorVisionProb() const;
+  inline float getPoorVisionProbDEPRECATED() const;
 
   inline float getWheelOnRightProb() const;
 
@@ -17520,8 +17530,8 @@ public:
   inline void adoptRawPredictions(::capnp::Orphan< ::capnp::Data>&& value);
   inline ::capnp::Orphan< ::capnp::Data> disownRawPredictions();
 
-  inline float getPoorVisionProb();
-  inline void setPoorVisionProb(float value);
+  inline float getPoorVisionProbDEPRECATED();
+  inline void setPoorVisionProbDEPRECATED(float value);
 
   inline float getWheelOnRightProb();
   inline void setWheelOnRightProb(float value);
@@ -17612,13 +17622,15 @@ public:
 
   inline float getSunglassesProb() const;
 
-  inline float getOccludedProb() const;
+  inline float getOccludedProbDEPRECATED() const;
 
-  inline bool hasReadyProb() const;
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getReadyProb() const;
+  inline bool hasReadyProbDEPRECATED() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getReadyProbDEPRECATED() const;
 
-  inline bool hasNotReadyProb() const;
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getNotReadyProb() const;
+  inline bool hasNotReadyProbDEPRECATED() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getNotReadyProbDEPRECATED() const;
+
+  inline float getPhoneProb() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -17698,24 +17710,27 @@ public:
   inline float getSunglassesProb();
   inline void setSunglassesProb(float value);
 
-  inline float getOccludedProb();
-  inline void setOccludedProb(float value);
+  inline float getOccludedProbDEPRECATED();
+  inline void setOccludedProbDEPRECATED(float value);
 
-  inline bool hasReadyProb();
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getReadyProb();
-  inline void setReadyProb( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
-  inline void setReadyProb(::kj::ArrayPtr<const float> value);
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initReadyProb(unsigned int size);
-  inline void adoptReadyProb(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
-  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownReadyProb();
+  inline bool hasReadyProbDEPRECATED();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getReadyProbDEPRECATED();
+  inline void setReadyProbDEPRECATED( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setReadyProbDEPRECATED(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initReadyProbDEPRECATED(unsigned int size);
+  inline void adoptReadyProbDEPRECATED(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownReadyProbDEPRECATED();
 
-  inline bool hasNotReadyProb();
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getNotReadyProb();
-  inline void setNotReadyProb( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
-  inline void setNotReadyProb(::kj::ArrayPtr<const float> value);
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initNotReadyProb(unsigned int size);
-  inline void adoptNotReadyProb(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
-  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownNotReadyProb();
+  inline bool hasNotReadyProbDEPRECATED();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getNotReadyProbDEPRECATED();
+  inline void setNotReadyProbDEPRECATED( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setNotReadyProbDEPRECATED(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initNotReadyProbDEPRECATED(unsigned int size);
+  inline void adoptNotReadyProbDEPRECATED(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownNotReadyProbDEPRECATED();
+
+  inline float getPhoneProb();
+  inline void setPhoneProb(float value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -18048,6 +18063,12 @@ public:
   inline bool hasEvents() const;
   inline  ::capnp::List< ::cereal::OnroadEvent,  ::capnp::Kind::STRUCT>::Reader getEvents() const;
 
+  inline  ::uint32_t getUncertainCount() const;
+
+  inline float getPhoneProbOffset() const;
+
+  inline  ::uint32_t getPhoneProbValidCount() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -18140,6 +18161,15 @@ public:
   inline  ::capnp::List< ::cereal::OnroadEvent,  ::capnp::Kind::STRUCT>::Builder initEvents(unsigned int size);
   inline void adoptEvents(::capnp::Orphan< ::capnp::List< ::cereal::OnroadEvent,  ::capnp::Kind::STRUCT>>&& value);
   inline ::capnp::Orphan< ::capnp::List< ::cereal::OnroadEvent,  ::capnp::Kind::STRUCT>> disownEvents();
+
+  inline  ::uint32_t getUncertainCount();
+  inline void setUncertainCount( ::uint32_t value);
+
+  inline float getPhoneProbOffset();
+  inline void setPhoneProbOffset(float value);
+
+  inline  ::uint32_t getPhoneProbValidCount();
+  inline void setPhoneProbValidCount( ::uint32_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -21534,13 +21564,13 @@ public:
   inline bool hasGyroscope() const;
   inline  ::cereal::SensorEventData::Reader getGyroscope() const;
 
-  inline bool isGyroscope2() const;
-  inline bool hasGyroscope2() const;
-  inline  ::cereal::SensorEventData::Reader getGyroscope2() const;
+  inline bool isGyroscope2DEPRECATED() const;
+  inline bool hasGyroscope2DEPRECATED() const;
+  inline  ::cereal::SensorEventData::Reader getGyroscope2DEPRECATED() const;
 
-  inline bool isAccelerometer2() const;
-  inline bool hasAccelerometer2() const;
-  inline  ::cereal::SensorEventData::Reader getAccelerometer2() const;
+  inline bool isAccelerometer2DEPRECATED() const;
+  inline bool hasAccelerometer2DEPRECATED() const;
+  inline  ::cereal::SensorEventData::Reader getAccelerometer2DEPRECATED() const;
 
   inline bool isUiDebug() const;
   inline bool hasUiDebug() const;
@@ -21626,9 +21656,9 @@ public:
   inline bool hasLivestreamDriverEncodeData() const;
   inline  ::cereal::EncodeData::Reader getLivestreamDriverEncodeData() const;
 
-  inline bool isTemperatureSensor2() const;
-  inline bool hasTemperatureSensor2() const;
-  inline  ::cereal::SensorEventData::Reader getTemperatureSensor2() const;
+  inline bool isTemperatureSensor2DEPRECATED() const;
+  inline bool hasTemperatureSensor2DEPRECATED() const;
+  inline  ::cereal::SensorEventData::Reader getTemperatureSensor2DEPRECATED() const;
 
   inline bool isCustomReservedRawData0() const;
   inline bool hasCustomReservedRawData0() const;
@@ -22553,21 +22583,21 @@ public:
   inline void adoptGyroscope(::capnp::Orphan< ::cereal::SensorEventData>&& value);
   inline ::capnp::Orphan< ::cereal::SensorEventData> disownGyroscope();
 
-  inline bool isGyroscope2();
-  inline bool hasGyroscope2();
-  inline  ::cereal::SensorEventData::Builder getGyroscope2();
-  inline void setGyroscope2( ::cereal::SensorEventData::Reader value);
-  inline  ::cereal::SensorEventData::Builder initGyroscope2();
-  inline void adoptGyroscope2(::capnp::Orphan< ::cereal::SensorEventData>&& value);
-  inline ::capnp::Orphan< ::cereal::SensorEventData> disownGyroscope2();
+  inline bool isGyroscope2DEPRECATED();
+  inline bool hasGyroscope2DEPRECATED();
+  inline  ::cereal::SensorEventData::Builder getGyroscope2DEPRECATED();
+  inline void setGyroscope2DEPRECATED( ::cereal::SensorEventData::Reader value);
+  inline  ::cereal::SensorEventData::Builder initGyroscope2DEPRECATED();
+  inline void adoptGyroscope2DEPRECATED(::capnp::Orphan< ::cereal::SensorEventData>&& value);
+  inline ::capnp::Orphan< ::cereal::SensorEventData> disownGyroscope2DEPRECATED();
 
-  inline bool isAccelerometer2();
-  inline bool hasAccelerometer2();
-  inline  ::cereal::SensorEventData::Builder getAccelerometer2();
-  inline void setAccelerometer2( ::cereal::SensorEventData::Reader value);
-  inline  ::cereal::SensorEventData::Builder initAccelerometer2();
-  inline void adoptAccelerometer2(::capnp::Orphan< ::cereal::SensorEventData>&& value);
-  inline ::capnp::Orphan< ::cereal::SensorEventData> disownAccelerometer2();
+  inline bool isAccelerometer2DEPRECATED();
+  inline bool hasAccelerometer2DEPRECATED();
+  inline  ::cereal::SensorEventData::Builder getAccelerometer2DEPRECATED();
+  inline void setAccelerometer2DEPRECATED( ::cereal::SensorEventData::Reader value);
+  inline  ::cereal::SensorEventData::Builder initAccelerometer2DEPRECATED();
+  inline void adoptAccelerometer2DEPRECATED(::capnp::Orphan< ::cereal::SensorEventData>&& value);
+  inline ::capnp::Orphan< ::cereal::SensorEventData> disownAccelerometer2DEPRECATED();
 
   inline bool isUiDebug();
   inline bool hasUiDebug();
@@ -22737,13 +22767,13 @@ public:
   inline void adoptLivestreamDriverEncodeData(::capnp::Orphan< ::cereal::EncodeData>&& value);
   inline ::capnp::Orphan< ::cereal::EncodeData> disownLivestreamDriverEncodeData();
 
-  inline bool isTemperatureSensor2();
-  inline bool hasTemperatureSensor2();
-  inline  ::cereal::SensorEventData::Builder getTemperatureSensor2();
-  inline void setTemperatureSensor2( ::cereal::SensorEventData::Reader value);
-  inline  ::cereal::SensorEventData::Builder initTemperatureSensor2();
-  inline void adoptTemperatureSensor2(::capnp::Orphan< ::cereal::SensorEventData>&& value);
-  inline ::capnp::Orphan< ::cereal::SensorEventData> disownTemperatureSensor2();
+  inline bool isTemperatureSensor2DEPRECATED();
+  inline bool hasTemperatureSensor2DEPRECATED();
+  inline  ::cereal::SensorEventData::Builder getTemperatureSensor2DEPRECATED();
+  inline void setTemperatureSensor2DEPRECATED( ::cereal::SensorEventData::Reader value);
+  inline  ::cereal::SensorEventData::Builder initTemperatureSensor2DEPRECATED();
+  inline void adoptTemperatureSensor2DEPRECATED(::capnp::Orphan< ::cereal::SensorEventData>&& value);
+  inline ::capnp::Orphan< ::cereal::SensorEventData> disownTemperatureSensor2DEPRECATED();
 
   inline bool isCustomReservedRawData0();
   inline bool hasCustomReservedRawData0();
@@ -32183,6 +32213,34 @@ inline float ControlsState::LateralTorqueState::Builder::getDesiredLateralAccel(
 inline void ControlsState::LateralTorqueState::Builder::setDesiredLateralAccel(float value) {
   _builder.setDataField<float>(
       ::capnp::bounded<9>() * ::capnp::ELEMENTS, value);
+}
+
+inline float ControlsState::LateralTorqueState::Reader::getDesiredLateralJerk() const {
+  return _reader.getDataField<float>(
+      ::capnp::bounded<10>() * ::capnp::ELEMENTS);
+}
+
+inline float ControlsState::LateralTorqueState::Builder::getDesiredLateralJerk() {
+  return _builder.getDataField<float>(
+      ::capnp::bounded<10>() * ::capnp::ELEMENTS);
+}
+inline void ControlsState::LateralTorqueState::Builder::setDesiredLateralJerk(float value) {
+  _builder.setDataField<float>(
+      ::capnp::bounded<10>() * ::capnp::ELEMENTS, value);
+}
+
+inline  ::int32_t ControlsState::LateralTorqueState::Reader::getVersion() const {
+  return _reader.getDataField< ::int32_t>(
+      ::capnp::bounded<11>() * ::capnp::ELEMENTS);
+}
+
+inline  ::int32_t ControlsState::LateralTorqueState::Builder::getVersion() {
+  return _builder.getDataField< ::int32_t>(
+      ::capnp::bounded<11>() * ::capnp::ELEMENTS);
+}
+inline void ControlsState::LateralTorqueState::Builder::setVersion( ::int32_t value) {
+  _builder.setDataField< ::int32_t>(
+      ::capnp::bounded<11>() * ::capnp::ELEMENTS, value);
 }
 
 inline bool ControlsState::LateralLQRState::Reader::getActive() const {
@@ -46915,16 +46973,16 @@ inline ::capnp::Orphan< ::capnp::Data> DriverStateV2::Builder::disownRawPredicti
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline float DriverStateV2::Reader::getPoorVisionProb() const {
+inline float DriverStateV2::Reader::getPoorVisionProbDEPRECATED() const {
   return _reader.getDataField<float>(
       ::capnp::bounded<3>() * ::capnp::ELEMENTS);
 }
 
-inline float DriverStateV2::Builder::getPoorVisionProb() {
+inline float DriverStateV2::Builder::getPoorVisionProbDEPRECATED() {
   return _builder.getDataField<float>(
       ::capnp::bounded<3>() * ::capnp::ELEMENTS);
 }
-inline void DriverStateV2::Builder::setPoorVisionProb(float value) {
+inline void DriverStateV2::Builder::setPoorVisionProbDEPRECATED(float value) {
   _builder.setDataField<float>(
       ::capnp::bounded<3>() * ::capnp::ELEMENTS, value);
 }
@@ -47271,94 +47329,108 @@ inline void DriverStateV2::DriverData::Builder::setSunglassesProb(float value) {
       ::capnp::bounded<5>() * ::capnp::ELEMENTS, value);
 }
 
-inline float DriverStateV2::DriverData::Reader::getOccludedProb() const {
+inline float DriverStateV2::DriverData::Reader::getOccludedProbDEPRECATED() const {
   return _reader.getDataField<float>(
       ::capnp::bounded<6>() * ::capnp::ELEMENTS);
 }
 
-inline float DriverStateV2::DriverData::Builder::getOccludedProb() {
+inline float DriverStateV2::DriverData::Builder::getOccludedProbDEPRECATED() {
   return _builder.getDataField<float>(
       ::capnp::bounded<6>() * ::capnp::ELEMENTS);
 }
-inline void DriverStateV2::DriverData::Builder::setOccludedProb(float value) {
+inline void DriverStateV2::DriverData::Builder::setOccludedProbDEPRECATED(float value) {
   _builder.setDataField<float>(
       ::capnp::bounded<6>() * ::capnp::ELEMENTS, value);
 }
 
-inline bool DriverStateV2::DriverData::Reader::hasReadyProb() const {
+inline bool DriverStateV2::DriverData::Reader::hasReadyProbDEPRECATED() const {
   return !_reader.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS).isNull();
 }
-inline bool DriverStateV2::DriverData::Builder::hasReadyProb() {
+inline bool DriverStateV2::DriverData::Builder::hasReadyProbDEPRECATED() {
   return !_builder.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS).isNull();
 }
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader DriverStateV2::DriverData::Reader::getReadyProb() const {
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader DriverStateV2::DriverData::Reader::getReadyProbDEPRECATED() const {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS));
 }
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder DriverStateV2::DriverData::Builder::getReadyProb() {
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder DriverStateV2::DriverData::Builder::getReadyProbDEPRECATED() {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS));
 }
-inline void DriverStateV2::DriverData::Builder::setReadyProb( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+inline void DriverStateV2::DriverData::Builder::setReadyProbDEPRECATED( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
   ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS), value);
 }
-inline void DriverStateV2::DriverData::Builder::setReadyProb(::kj::ArrayPtr<const float> value) {
+inline void DriverStateV2::DriverData::Builder::setReadyProbDEPRECATED(::kj::ArrayPtr<const float> value) {
   ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS), value);
 }
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder DriverStateV2::DriverData::Builder::initReadyProb(unsigned int size) {
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder DriverStateV2::DriverData::Builder::initReadyProbDEPRECATED(unsigned int size) {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS), size);
 }
-inline void DriverStateV2::DriverData::Builder::adoptReadyProb(
+inline void DriverStateV2::DriverData::Builder::adoptReadyProbDEPRECATED(
     ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
   ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> DriverStateV2::DriverData::Builder::disownReadyProb() {
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> DriverStateV2::DriverData::Builder::disownReadyProbDEPRECATED() {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
       ::capnp::bounded<4>() * ::capnp::POINTERS));
 }
 
-inline bool DriverStateV2::DriverData::Reader::hasNotReadyProb() const {
+inline bool DriverStateV2::DriverData::Reader::hasNotReadyProbDEPRECATED() const {
   return !_reader.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS).isNull();
 }
-inline bool DriverStateV2::DriverData::Builder::hasNotReadyProb() {
+inline bool DriverStateV2::DriverData::Builder::hasNotReadyProbDEPRECATED() {
   return !_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS).isNull();
 }
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader DriverStateV2::DriverData::Reader::getNotReadyProb() const {
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader DriverStateV2::DriverData::Reader::getNotReadyProbDEPRECATED() const {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS));
 }
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder DriverStateV2::DriverData::Builder::getNotReadyProb() {
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder DriverStateV2::DriverData::Builder::getNotReadyProbDEPRECATED() {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS));
 }
-inline void DriverStateV2::DriverData::Builder::setNotReadyProb( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+inline void DriverStateV2::DriverData::Builder::setNotReadyProbDEPRECATED( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
   ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS), value);
 }
-inline void DriverStateV2::DriverData::Builder::setNotReadyProb(::kj::ArrayPtr<const float> value) {
+inline void DriverStateV2::DriverData::Builder::setNotReadyProbDEPRECATED(::kj::ArrayPtr<const float> value) {
   ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS), value);
 }
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder DriverStateV2::DriverData::Builder::initNotReadyProb(unsigned int size) {
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder DriverStateV2::DriverData::Builder::initNotReadyProbDEPRECATED(unsigned int size) {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS), size);
 }
-inline void DriverStateV2::DriverData::Builder::adoptNotReadyProb(
+inline void DriverStateV2::DriverData::Builder::adoptNotReadyProbDEPRECATED(
     ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
   ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> DriverStateV2::DriverData::Builder::disownNotReadyProb() {
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> DriverStateV2::DriverData::Builder::disownNotReadyProbDEPRECATED() {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS));
+}
+
+inline float DriverStateV2::DriverData::Reader::getPhoneProb() const {
+  return _reader.getDataField<float>(
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS);
+}
+
+inline float DriverStateV2::DriverData::Builder::getPhoneProb() {
+  return _builder.getDataField<float>(
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS);
+}
+inline void DriverStateV2::DriverData::Builder::setPhoneProb(float value) {
+  _builder.setDataField<float>(
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS, value);
 }
 
 inline  ::uint32_t DriverStateDEPRECATED::Reader::getFrameId() const {
@@ -48217,6 +48289,48 @@ inline void DriverMonitoringState::Builder::adoptEvents(
 inline ::capnp::Orphan< ::capnp::List< ::cereal::OnroadEvent,  ::capnp::Kind::STRUCT>> DriverMonitoringState::Builder::disownEvents() {
   return ::capnp::_::PointerHelpers< ::capnp::List< ::cereal::OnroadEvent,  ::capnp::Kind::STRUCT>>::disown(_builder.getPointerField(
       ::capnp::bounded<1>() * ::capnp::POINTERS));
+}
+
+inline  ::uint32_t DriverMonitoringState::Reader::getUncertainCount() const {
+  return _reader.getDataField< ::uint32_t>(
+      ::capnp::bounded<11>() * ::capnp::ELEMENTS);
+}
+
+inline  ::uint32_t DriverMonitoringState::Builder::getUncertainCount() {
+  return _builder.getDataField< ::uint32_t>(
+      ::capnp::bounded<11>() * ::capnp::ELEMENTS);
+}
+inline void DriverMonitoringState::Builder::setUncertainCount( ::uint32_t value) {
+  _builder.setDataField< ::uint32_t>(
+      ::capnp::bounded<11>() * ::capnp::ELEMENTS, value);
+}
+
+inline float DriverMonitoringState::Reader::getPhoneProbOffset() const {
+  return _reader.getDataField<float>(
+      ::capnp::bounded<12>() * ::capnp::ELEMENTS);
+}
+
+inline float DriverMonitoringState::Builder::getPhoneProbOffset() {
+  return _builder.getDataField<float>(
+      ::capnp::bounded<12>() * ::capnp::ELEMENTS);
+}
+inline void DriverMonitoringState::Builder::setPhoneProbOffset(float value) {
+  _builder.setDataField<float>(
+      ::capnp::bounded<12>() * ::capnp::ELEMENTS, value);
+}
+
+inline  ::uint32_t DriverMonitoringState::Reader::getPhoneProbValidCount() const {
+  return _reader.getDataField< ::uint32_t>(
+      ::capnp::bounded<13>() * ::capnp::ELEMENTS);
+}
+
+inline  ::uint32_t DriverMonitoringState::Builder::getPhoneProbValidCount() {
+  return _builder.getDataField< ::uint32_t>(
+      ::capnp::bounded<13>() * ::capnp::ELEMENTS);
+}
+inline void DriverMonitoringState::Builder::setPhoneProbValidCount( ::uint32_t value) {
+  _builder.setDataField< ::uint32_t>(
+      ::capnp::bounded<13>() * ::capnp::ELEMENTS, value);
 }
 
 inline  ::uint64_t Boot::Reader::getWallTimeNanos() const {
@@ -56800,109 +56914,109 @@ inline ::capnp::Orphan< ::cereal::SensorEventData> Event::Builder::disownGyrosco
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline bool Event::Reader::isGyroscope2() const {
-  return which() == Event::GYROSCOPE2;
+inline bool Event::Reader::isGyroscope2DEPRECATED() const {
+  return which() == Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool Event::Builder::isGyroscope2() {
-  return which() == Event::GYROSCOPE2;
+inline bool Event::Builder::isGyroscope2DEPRECATED() {
+  return which() == Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool Event::Reader::hasGyroscope2() const {
-  if (which() != Event::GYROSCOPE2) return false;
+inline bool Event::Reader::hasGyroscope2DEPRECATED() const {
+  if (which() != Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline bool Event::Builder::hasGyroscope2() {
-  if (which() != Event::GYROSCOPE2) return false;
+inline bool Event::Builder::hasGyroscope2DEPRECATED() {
+  if (which() != Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::SensorEventData::Reader Event::Reader::getGyroscope2() const {
-  KJ_IREQUIRE((which() == Event::GYROSCOPE2),
+inline  ::cereal::SensorEventData::Reader Event::Reader::getGyroscope2DEPRECATED() const {
+  KJ_IREQUIRE((which() == Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::get(_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline  ::cereal::SensorEventData::Builder Event::Builder::getGyroscope2() {
-  KJ_IREQUIRE((which() == Event::GYROSCOPE2),
+inline  ::cereal::SensorEventData::Builder Event::Builder::getGyroscope2DEPRECATED() {
+  KJ_IREQUIRE((which() == Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::get(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::setGyroscope2( ::cereal::SensorEventData::Reader value) {
+inline void Event::Builder::setGyroscope2DEPRECATED( ::cereal::SensorEventData::Reader value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::GYROSCOPE2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::set(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::SensorEventData::Builder Event::Builder::initGyroscope2() {
+inline  ::cereal::SensorEventData::Builder Event::Builder::initGyroscope2DEPRECATED() {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::GYROSCOPE2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D);
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::init(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::adoptGyroscope2(
+inline void Event::Builder::adoptGyroscope2DEPRECATED(
     ::capnp::Orphan< ::cereal::SensorEventData>&& value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::GYROSCOPE2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::adopt(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::SensorEventData> Event::Builder::disownGyroscope2() {
-  KJ_IREQUIRE((which() == Event::GYROSCOPE2),
+inline ::capnp::Orphan< ::cereal::SensorEventData> Event::Builder::disownGyroscope2DEPRECATED() {
+  KJ_IREQUIRE((which() == Event::GYROSCOPE2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline bool Event::Reader::isAccelerometer2() const {
-  return which() == Event::ACCELEROMETER2;
+inline bool Event::Reader::isAccelerometer2DEPRECATED() const {
+  return which() == Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool Event::Builder::isAccelerometer2() {
-  return which() == Event::ACCELEROMETER2;
+inline bool Event::Builder::isAccelerometer2DEPRECATED() {
+  return which() == Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool Event::Reader::hasAccelerometer2() const {
-  if (which() != Event::ACCELEROMETER2) return false;
+inline bool Event::Reader::hasAccelerometer2DEPRECATED() const {
+  if (which() != Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline bool Event::Builder::hasAccelerometer2() {
-  if (which() != Event::ACCELEROMETER2) return false;
+inline bool Event::Builder::hasAccelerometer2DEPRECATED() {
+  if (which() != Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::SensorEventData::Reader Event::Reader::getAccelerometer2() const {
-  KJ_IREQUIRE((which() == Event::ACCELEROMETER2),
+inline  ::cereal::SensorEventData::Reader Event::Reader::getAccelerometer2DEPRECATED() const {
+  KJ_IREQUIRE((which() == Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::get(_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline  ::cereal::SensorEventData::Builder Event::Builder::getAccelerometer2() {
-  KJ_IREQUIRE((which() == Event::ACCELEROMETER2),
+inline  ::cereal::SensorEventData::Builder Event::Builder::getAccelerometer2DEPRECATED() {
+  KJ_IREQUIRE((which() == Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::get(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::setAccelerometer2( ::cereal::SensorEventData::Reader value) {
+inline void Event::Builder::setAccelerometer2DEPRECATED( ::cereal::SensorEventData::Reader value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::ACCELEROMETER2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::set(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::SensorEventData::Builder Event::Builder::initAccelerometer2() {
+inline  ::cereal::SensorEventData::Builder Event::Builder::initAccelerometer2DEPRECATED() {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::ACCELEROMETER2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D);
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::init(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::adoptAccelerometer2(
+inline void Event::Builder::adoptAccelerometer2DEPRECATED(
     ::capnp::Orphan< ::cereal::SensorEventData>&& value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::ACCELEROMETER2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::adopt(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::SensorEventData> Event::Builder::disownAccelerometer2() {
-  KJ_IREQUIRE((which() == Event::ACCELEROMETER2),
+inline ::capnp::Orphan< ::cereal::SensorEventData> Event::Builder::disownAccelerometer2DEPRECATED() {
+  KJ_IREQUIRE((which() == Event::ACCELEROMETER2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
@@ -58042,55 +58156,55 @@ inline ::capnp::Orphan< ::cereal::EncodeData> Event::Builder::disownLivestreamDr
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline bool Event::Reader::isTemperatureSensor2() const {
-  return which() == Event::TEMPERATURE_SENSOR2;
+inline bool Event::Reader::isTemperatureSensor2DEPRECATED() const {
+  return which() == Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool Event::Builder::isTemperatureSensor2() {
-  return which() == Event::TEMPERATURE_SENSOR2;
+inline bool Event::Builder::isTemperatureSensor2DEPRECATED() {
+  return which() == Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool Event::Reader::hasTemperatureSensor2() const {
-  if (which() != Event::TEMPERATURE_SENSOR2) return false;
+inline bool Event::Reader::hasTemperatureSensor2DEPRECATED() const {
+  if (which() != Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline bool Event::Builder::hasTemperatureSensor2() {
-  if (which() != Event::TEMPERATURE_SENSOR2) return false;
+inline bool Event::Builder::hasTemperatureSensor2DEPRECATED() {
+  if (which() != Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::SensorEventData::Reader Event::Reader::getTemperatureSensor2() const {
-  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2),
+inline  ::cereal::SensorEventData::Reader Event::Reader::getTemperatureSensor2DEPRECATED() const {
+  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::get(_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline  ::cereal::SensorEventData::Builder Event::Builder::getTemperatureSensor2() {
-  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2),
+inline  ::cereal::SensorEventData::Builder Event::Builder::getTemperatureSensor2DEPRECATED() {
+  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::get(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::setTemperatureSensor2( ::cereal::SensorEventData::Reader value) {
+inline void Event::Builder::setTemperatureSensor2DEPRECATED( ::cereal::SensorEventData::Reader value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::set(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::SensorEventData::Builder Event::Builder::initTemperatureSensor2() {
+inline  ::cereal::SensorEventData::Builder Event::Builder::initTemperatureSensor2DEPRECATED() {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D);
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::init(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::adoptTemperatureSensor2(
+inline void Event::Builder::adoptTemperatureSensor2DEPRECATED(
     ::capnp::Orphan< ::cereal::SensorEventData>&& value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2);
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::adopt(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::SensorEventData> Event::Builder::disownTemperatureSensor2() {
-  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2),
+inline ::capnp::Orphan< ::cereal::SensorEventData> Event::Builder::disownTemperatureSensor2DEPRECATED() {
+  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
